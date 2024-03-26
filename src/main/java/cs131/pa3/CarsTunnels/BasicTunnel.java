@@ -1,3 +1,12 @@
+/**
+     * Car Tunells.
+     * Known Bugs: Kill working but not passing tests
+     *
+     * @author Abraham Iberkleid
+     * aiberkleid@brandeis.edu
+     * March 26, 2024
+     * COSI 131A PA3
+     */
 package cs131.pa3.CarsTunnels;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -18,94 +27,88 @@ public class BasicTunnel extends Tunnel {
 	private int numSleds = 0;
 	private Direction direction = null;
 
+	/**
+	 * Constructs a new BasicTunnel with the given name.
+	 *
+	 * @param name The name of the tunnel.
+	 */
 	public BasicTunnel(String name) {
 		super(name);
-		System.out.println("Created " + name + " Tunnel");
 	}
 
+	/**
+	 * Checks if it is safe for a vehicle to enter the tunnel.
+	 *
+	 * @param vehicle The vehicle trying to enter.
+	 * @return true if it is safe for the vehicle to enter, false otherwise.
+	 */
 	private synchronized boolean isSafeToEnter(Vehicle vehicle) {
 		boolean safe = false;
+		Direction vehicleDirection = vehicle.getDirection();
 		if (vehicle instanceof Car) {
 			safe = (numSleds == 0) && (numCars < 3) &&
-					((direction == null) || (direction == vehicle.getDirection()));
-		} else if (vehicle instanceof Sled) {
-			safe = (numSleds == 0) && (numCars == 0) &&
-					((direction == null) || (direction == vehicle.getDirection()));
+					((direction == null) || (direction == vehicleDirection));
 		}
-		System.out.println("isSafeToEnter check for " + vehicle + ": " + safe + " | Cars: " + numCars + ", Sleds: "
-				+ numSleds + ", Direction: " + direction);
+		if (vehicle instanceof Sled) {
+			safe = (numSleds == 0) && (numCars == 0) &&
+					((direction == null) || (direction == vehicleDirection));
+		}
 		return safe;
 	}
 
-	// @Override
-	// protected synchronized boolean tryToEnterInner(Vehicle vehicle) {
-	// try {
-	// while (!isSafeToEnter(vehicle)) {
-	// System.out.println("Vehicle waiting: " + vehicle);
-	// wait();
-	// }
-	// if (vehicle instanceof Car) {
-	// numCars++;
-	// } else if (vehicle instanceof Sled) {
-	// numSleds++;
-	// }
-	// if (direction == null) {
-	// direction = vehicle.getDirection();
-	// }
-	// System.out.println("Vehicle entered: " + vehicle + " | Cars: " + numCars + ",
-	// Sleds: " + numSleds
-	// + ", Direction: " + direction);
-	// return true;
-	// } catch (InterruptedException e) {
-	// System.out.println("Thread interrupted for vehicle: " + vehicle);
-	// Thread.currentThread().interrupt();
-	// return false;
-	// } finally {
-	// notifyAll();
-	// }
-	// }
-
+	/**
+	 * Tries to enter the tunnel with the given vehicle.
+	 * Updates the number of cars or sleds in the tunnel if the vehicle can enter.
+	 *
+	 * @param vehicle The vehicle attempting to enter.
+	 * @return true if the vehicle successfully enters, false otherwise.
+	 */
 	@Override
 	protected synchronized boolean tryToEnterInner(Vehicle vehicle) {
+		String vehicleType = vehicle instanceof Car ? "Car" : vehicle instanceof Sled ? "Sled" : null;
+
 		while (!isSafeToEnter(vehicle)) {
-			System.out.println("Vehicle waiting: " + vehicle + " | Cars: " + numCars + ", Sleds: " + numSleds
-					+ ", Direction: " + direction);
-			// Simulate the wait without actually calling wait()
-			// NOTE: This is just for debugging and should not be used in production
-			return false; // or break; to exit the loop
+			return false;
 		}
 
-		if (vehicle instanceof Car) {
-			numCars++;
-		} else if (vehicle instanceof Sled) {
-			numSleds++;
+		switch (vehicleType) {
+			case "Car":
+				numCars = numCars + 1;
+				break;
+			case "Sled":
+				numSleds = numSleds + 1;
+				break;
+			default:
+				return false;
+
 		}
 
 		if (direction == null) {
 			direction = vehicle.getDirection();
 		}
-
-		System.out.println("Vehicle entered: " + vehicle + " | Cars: " + numCars + ", Sleds: " + numSleds
-				+ ", Direction: " + direction);
-		// notifyAll() should still be called to ensure correct behavior for other
-		// threads
 		notifyAll();
 		return true;
 	}
 
+	/**
+	 * Exits the tunnel with the given vehicle.
+	 * Updates the number of cars or sleds in the tunnel and the direction if
+	 * necessary.
+	 *
+	 * @param vehicle The vehicle exiting the tunnel.
+	 */
 	@Override
 	protected synchronized void exitTunnelInner(Vehicle vehicle) {
 		if (vehicle instanceof Car) {
-			numCars--;
-		} else if (vehicle instanceof Sled) {
-			numSleds--;
+			numCars = numCars - 1;
+		}
+		if (vehicle instanceof Sled) {
+			numSleds = numSleds - 1;
 		}
 
 		if (numCars == 0 && numSleds == 0) {
 			direction = null;
 		}
-		System.out.println("Vehicle exited: " + vehicle + " | Cars: " + numCars + ", Sleds: " + numSleds
-				+ ", Direction: " + direction);
 		notifyAll();
 	}
 }
