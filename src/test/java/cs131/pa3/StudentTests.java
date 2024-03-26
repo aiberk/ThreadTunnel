@@ -1,3 +1,12 @@
+/**
+     * Car Tunells.
+     * Known Bugs: Kill working but not passing tests
+     *
+     * @author Abraham Iberkleid
+     * aiberkleid@brandeis.edu
+     * March 26, 2024
+     * COSI 131A PA3
+     */
 package cs131.pa3;
 
 import org.junit.jupiter.api.Test;
@@ -86,7 +95,7 @@ public class StudentTests {
         tunnel.exitTunnel(car2);
         tunnel.exitTunnel(car3);
     }
-    
+
     @Test
     public void testTunnelStateAfterMultipleExits() {
         BasicTunnel tunnel = new BasicTunnel("ExitTestTunnel");
@@ -103,6 +112,5 @@ public class StudentTests {
         assertTrue(tunnel.tryToEnter(sled1), "Sled1 should be able to enter after cars have exited");
         tunnel.exitTunnel(sled1);
     }
-
 
 }

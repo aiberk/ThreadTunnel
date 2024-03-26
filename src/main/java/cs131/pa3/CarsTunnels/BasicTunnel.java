@@ -1,3 +1,12 @@
+/**
+     * Car Tunells.
+     * Known Bugs: Kill working but not passing tests
+     *
+     * @author Abraham Iberkleid
+     * aiberkleid@brandeis.edu
+     * March 26, 2024
+     * COSI 131A PA3
+     */
 package cs131.pa3.CarsTunnels;
 
 import java.util.concurrent.atomic.AtomicBoolean;
