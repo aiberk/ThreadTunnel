@@ -4,6 +4,7 @@ import cs131.pa3.Abstract.Direction;
 import cs131.pa3.Abstract.Factory;
 import cs131.pa3.Abstract.Tunnel;
 import cs131.pa3.Abstract.Vehicle;
+import cs131.pa3.CarsTunnels.BasicTunnel;
 
 /**
  * The class implementing the Factory interface for creating instances of
@@ -15,17 +16,20 @@ import cs131.pa3.Abstract.Vehicle;
 public class ConcreteFactory implements Factory {
 
     @Override
-    public Tunnel createNewBasicTunnel(String name) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public BasicTunnel createNewBasicTunnel(String name) {
+        BasicTunnel tunnel = new BasicTunnel(name);
+        return tunnel;
     }
 
     @Override
     public Vehicle createNewCar(String name, Direction direction) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Vehicle car = new Car(name, direction);
+        return car;
     }
 
     @Override
     public Vehicle createNewSled(String name, Direction direction) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Vehicle sled = new Sled(name, direction);
+        return sled;
     }
 }
